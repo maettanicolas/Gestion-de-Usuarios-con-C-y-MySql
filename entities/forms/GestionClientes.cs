@@ -1,12 +1,6 @@
 ﻿using GestionUsuarios.dao;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GestionUsuarios
@@ -29,9 +23,8 @@ namespace GestionUsuarios
             listClientes.Items.Clear();
             for (int i = 0; i < listaDb.Count; i++)
             {
-
-               Cliente cliente = listaDb[i];
-               listClientes.Items.Add(cliente);
+                Cliente cliente = listaDb[i];
+                listClientes.Items.Add(cliente);
 
             }
         }
@@ -42,10 +35,16 @@ namespace GestionUsuarios
             cliente.Apellido = txtApellido.Text;
             cliente.Telefono = txtTelefono.Text;
             cliente.TarjetaDeCredito = txtTarjetaDeCredito.Text;
+
+            if (lblId.Text != "")
+            {
+                cliente.Id = lblId.Text;
+            }
+
             ClienteDao baseDeDatos = new ClienteDao();
             baseDeDatos.Guardar(cliente);
             actualizarLista();
-
+            limpiarListado();
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
@@ -53,8 +52,10 @@ namespace GestionUsuarios
 
             try
             {
-                int indice = listClientes.SelectedIndex;
-                listClientes.Items.RemoveAt(indice);
+                Cliente cliente = (Cliente)listClientes.SelectedItem;
+                ClienteDao baseDeDatos = new ClienteDao();
+                baseDeDatos.Eliminar(cliente);
+                actualizarLista();
             }
             catch (Exception)
             {
@@ -64,9 +65,31 @@ namespace GestionUsuarios
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            Cliente cliente = (Cliente)listClientes.SelectedItem;
+            txtNombre.Text = cliente.Nombre;
+            txtApellido.Text = cliente.Apellido;
+            txtTelefono.Text = cliente.Telefono;
+            txtTarjetaDeCredito.Text = cliente.TarjetaDeCredito;
+            lblId.Text = cliente.Id;
+
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
         {
            
+            limpiarListado();
+
+
+        }
+        private void limpiarListado()
+        {
+            lblId.Text = "";
+            txtNombre.Text = "";
+            txtApellido.Text = "";
+            txtTelefono.Text = "";
+            txtTarjetaDeCredito.Text = "";
         }
     }
 }
